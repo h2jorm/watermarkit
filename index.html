@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Watermarkit</title>
+  </head>
+  <body>
+    <script type="text/javascript" src="./dist/watermarkit.js"></script>
+    <script type="text/javascript">
+      var opts = {
+        text: 'hello world',
+        fontSize: 20,
+        fontFamily: 'sans-serif',
+        fillStyle: '#eee',
+        opacity: '0.5',
+      };
+
+      var image = new Image();
+      image.onload = function () {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        canvas.width = image.width;
+        canvas.height = image.height;
+        ctx.drawImage(image, 0, 0);
+        var ret = Watermarkit(canvas, opts);
+        document.body.appendChild(ret);
+      };
+      image.src = './illustration.jpg';
+    </script>
+  </body>
+</html>
