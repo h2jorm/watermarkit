@@ -2,6 +2,19 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <div style="margin-bottom: 1rem">
+      <div>
+        <input type="file" id="image">
+      </div>
+      <div>
+        <label for="color">color</label>
+        <input type="text" id="color" placeholder="#eee" value="#eee">
+      </div>
+      <div>
+        <label for="opacity">opacity</label>
+        <input type="text" id="opacity" placeholder="0.5" value="0.5">
+      </div>
+    </div>
     <title>Watermarkit</title>
   </head>
   <body>
@@ -15,17 +28,62 @@
         opacity: '0.5',
       };
 
-      var image = new Image();
-      image.onload = function () {
+      var lastImageUrl = './illustration.jpg';
+      var imageInput = document.getElementById('image');
+      imageInput.addEventListener('change', function (e) {
+        var file = e.target.files[0];
+        if (!file) {
+          return;
+        }
+        lastImageUrl = URL.createObjectURL(file)
+        loadImage(lastImageUrl);
+      });
+      document.getElementById('color')
+      .addEventListener('change', function (e) {
+        var value = e.target.value.trim();
+        if (!value) {
+          return;
+        }
+        opts.fillStyle = value;
+        loadImage(lastImageUrl);
+      });
+      document.getElementById('opacity')
+      .addEventListener('change', function (e) {
+        var value = e.target.value.trim();
+        if (!value) {
+          return;
+        }
+        opts.opacity = value;
+        loadImage(lastImageUrl);
+      });
+
+
+      loadImage(lastImageUrl);
+
+      function loadImage(src) {
+        var image = new Image();
+        image.onload = function () {
+          loadCvs(image);
+        };
+        image.src = src;
+      }
+
+      var imageCvs;
+
+      function loadCvs(image) {
+        if (imageCvs) {
+          imageCvs.remove();
+        }
         var canvas = document.createElement('canvas');
         var ctx = canvas.getContext('2d');
         canvas.width = image.width;
         canvas.height = image.height;
         ctx.drawImage(image, 0, 0);
         var ret = Watermarkit(canvas, opts);
+        imageCvs = ret;
         document.body.appendChild(ret);
-      };
-      image.src = './illustration.jpg';
+      }
+
     </script>
   </body>
 </html>
